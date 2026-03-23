@@ -4,8 +4,6 @@ from configparser import ConfigParser
 class Config:
     def __init__(self, config_file="src/langgraph_agentic_ai/ui/uiconfigfile.ini"):
         self.config = ConfigParser()
-        
-        # Check if file exists before reading to avoid silent failures
         if not os.path.exists(config_file):
             print(f"Warning: Configuration file not found at {config_file}")
             
@@ -25,5 +23,4 @@ class Config:
         return [opt.strip() for opt in models.split(",")]
 
     def get_page_title(self):
-        # Directly addresses the NoneType concatenation error in your UI
         return self.config.get("DEFAULT", "PAGE_TITLE", fallback="AgenticHub")

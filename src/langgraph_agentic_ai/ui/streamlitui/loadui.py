@@ -1,7 +1,7 @@
 import os
 import streamlit as st
 
-from src.langgraph_agentic_ai.ui.uicinfigfile import Config
+from src.langgraph_agentic_ai.ui.uiconfigfile import Config
 
 
 class LoadStreamlitUI:
