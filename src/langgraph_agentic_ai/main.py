@@ -19,7 +19,7 @@ def load_langgraph_agenticai_app():
         st.error("Error:Failed to load user input from the UI")
         return
     
-    user_message = st.chat_input("Enter yuor message")
+    user_message = st.chat_input("Enter your message")
 
     if user_message:
         try:

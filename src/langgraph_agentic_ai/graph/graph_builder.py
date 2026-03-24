@@ -3,6 +3,7 @@ from src.langgraph_agentic_ai.state.state import State
 from src.langgraph_agentic_ai.nodes.basic_chatbot_node import BasicChatbotNode
 from src.langgraph_agentic_ai.tools.search_tool import get_tools,create_tools_node
 from langgraph.prebuilt import tools_condition , ToolNode
+from src.langgraph_agentic_ai.nodes.chatbot_with_tool_node import ChatbotWithToolNode
 class GraphBuilder:
     def __init__(self,model):
         self.llm = model
@@ -41,16 +42,22 @@ class GraphBuilder:
         llm = self.llm
 
         #Define the chabot Node
+        obj_chatbot_with_node = ChatbotWithToolNode(llm)
+        chatbot_node = obj_chatbot_with_node.create_chatbot(tools)
 
         #Add Nodes
-        self.graph_builder.add_node("chatbot","")
+        self.graph_builder.add_node("chatbot",chatbot_node)
         self.graph_builder.add_node("tools",tool_node)
 
         #Define conditional and direct edges
         self.graph_builder.add_edge(START, "chatbot")
-        self.graph_builder.add_conditional_edges("chatbot", tools_condition )
+        # Route to the tools node only when tool calls are present; otherwise end.
+        self.graph_builder.add_conditional_edges(
+            "chatbot",
+            tools_condition,
+            {"tools": "tools", "__end__": END},
+        )
         self.graph_builder.add_edge("tools","chatbot")
-        self.graph_builder.add_edge("chatbot", END)
 
 
     def setup_graph(self , usecase:str):
