@@ -1,4 +1,4 @@
-# The new class name in langchain-tavily is TavilySearch
+
 from langchain_tavily import TavilySearch 
 from langgraph.prebuilt import ToolNode
 
