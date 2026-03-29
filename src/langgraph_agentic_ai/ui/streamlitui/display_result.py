@@ -31,27 +31,34 @@ class DisplayResultStreamlit:
             # 2. Iterate through messages. 
             # Note: We use isinstance() instead of type() == for better compatibility
             if "messages" in res:
-                rendered_any = False
                 for message in res['messages']:
                     if isinstance(message, HumanMessage):
                         with st.chat_message("user"):
-                            st.write(message.content)
-                        rendered_any = True
+                              st.write(message.content)
                     
                     elif isinstance(message, ToolMessage):
                         # Use st.expander for ToolMessages so they don't clutter the UI
                         with st.expander("🛠️ Tool Output (Search Results)", expanded=False):
-                            st.write(message.content)
-                        rendered_any = True
-                    
+                            st.write(message.content)  
                     elif isinstance(message, AIMessage) and message.content:
                         with st.chat_message("assistant"):
                             st.write(message.content)
-                        rendered_any = True
 
-                if not rendered_any:
-                    st.warning("No visible response returned by the tool workflow.")
-            else:
-                st.error("Tool workflow did not return a valid messages payload.")
+        elif usecase == "ai news":
+            frequency = self.user_message
+            with st.spinner("Fetching and summarizing news... ⏳"):
+                result = graph.invoke({"messages": frequency})
+                try:
+                    # Read the markdown file
+                    AI_NEWS_PATH = f"./src/AINews/{frequency}_summary.md"
+                    with open(AI_NEWS_PATH, "r") as file:
+                        markdown_content = file.read()
+
+                    # Display the markdown content in Streamlit
+                    st.markdown(markdown_content, unsafe_allow_html=True)
+                except FileNotFoundError:
+                    st.error(f"News Not Generated or File not found: {AI_NEWS_PATH}")
+                except Exception as e:
+                    st.error(f"An error occurred: {str(e)}")
         else:
             st.error(f"Unsupported use case: {self.usecase}")
